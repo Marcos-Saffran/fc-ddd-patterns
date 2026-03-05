@@ -197,6 +197,13 @@ describe("Order repository test", () => {
     });
   });
 
+  it("should throw an error when order is not found", async () => {
+    const orderRepository = new OrderRepository();
+    await expect(orderRepository.find("456")).rejects.toThrow(
+      /^Order not found: 456,/
+    );
+  });
+
   it("should find all orders", async () => {
     const customerRepository = new CustomerRepository();
     const customer = new Customer("123", "Customer 1");
@@ -244,7 +251,7 @@ describe("Order repository test", () => {
     const orders = [order1, order2];
 
     expect(foundOrders.length).toBe(2);
-    
+
     expect(foundOrders[0].id).toBe(orders[0].id);
     expect(foundOrders[0].customerId).toBe(orders[0].customerId);
     expect(foundOrders[0].total()).toBe(orders[0].total());
