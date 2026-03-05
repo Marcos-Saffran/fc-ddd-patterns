@@ -82,7 +82,7 @@ describe("Order repository test", () => {
     });
   });
 
-  it("should update an order", async () => { 
+  it("should update an order", async () => {
     const customerRepository = new CustomerRepository();
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
@@ -195,5 +195,76 @@ describe("Order repository test", () => {
         },
       ],
     });
+  });
+
+  it("should find all orders", async () => {
+    const customerRepository = new CustomerRepository();
+    const customer = new Customer("123", "Customer 1");
+    const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
+    customer.changeAddress(address);
+    await customerRepository.create(customer);
+
+    const customer2 = new Customer("124", "Customer 2");
+    const address2 = new Address("Street 2", 2, "Zipcode 2", "City 2");
+    customer2.changeAddress(address2);
+    await customerRepository.create(customer2);
+
+    const productRepository = new ProductRepository();
+    const product = new Product("123", "Product 1", 10);
+    await productRepository.create(product);
+
+    const product2 = new Product("124", "Product 2", 20);
+    await productRepository.create(product2);
+
+    const orderItem = new OrderItem(
+      "1",
+      product.name,
+      product.price,
+      product.id,
+      2
+    );
+
+    const order1 = new Order("123", "123", [orderItem]);
+
+    const orderRepository = new OrderRepository();
+    await orderRepository.create(order1);
+
+    const orderItem2 = new OrderItem(
+      "2",
+      product2.name,
+      product2.price,
+      product2.id,
+      3
+    );
+
+    const order2 = new Order("124", "124", [orderItem2]);
+    await orderRepository.create(order2);
+
+    const foundOrders = await orderRepository.findAll();
+    const orders = [order1, order2];
+
+    expect(foundOrders.length).toBe(2);
+    
+    expect(foundOrders[0].id).toBe(orders[0].id);
+    expect(foundOrders[0].customerId).toBe(orders[0].customerId);
+    expect(foundOrders[0].total()).toBe(orders[0].total());
+    expect(foundOrders[0].items.length).toBe(orders[0].items.length);
+    expect(foundOrders[0].items[0].id).toBe(orders[0].items[0].id);
+    expect(foundOrders[0].items[0].name).toBe(orders[0].items[0].name);
+    expect(foundOrders[0].items[0].price).toBe(orders[0].items[0].price);
+    expect(foundOrders[0].items[0].quantity).toBe(
+      orders[0].items[0].quantity
+    );
+
+    expect(foundOrders[1].id).toBe(orders[1].id);
+    expect(foundOrders[1].customerId).toBe(orders[1].customerId);
+    expect(foundOrders[1].total()).toBe(orders[1].total());
+    expect(foundOrders[1].items.length).toBe(orders[1].items.length);
+    expect(foundOrders[1].items[0].id).toBe(orders[1].items[0].id);
+    expect(foundOrders[1].items[0].name).toBe(orders[1].items[0].name);
+    expect(foundOrders[1].items[0].price).toBe(orders[1].items[0].price);
+    expect(foundOrders[1].items[0].quantity).toBe(
+      orders[1].items[0].quantity
+    );
   });
 });
