@@ -2,6 +2,8 @@
 
 Este projeto implementa padrões de Domain-Driven Design (DDD) em TypeScript, com exemplos práticos de arquitetura em diferentes domínios como Customer, Product e Checkout.
 
+É referente ao Desafio de Repositórios do módulo "DDD: Modelagem Tática e Patterns" do curso "Full Cycle 3.0" da FullCycle.
+
 ## Requisitos
 
 - Node.js (versão 14 ou superior)
