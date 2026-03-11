@@ -139,4 +139,35 @@ describe("Customer Domain Events Handlers Tests", () => {
 
         spyConsole.mockRestore();
     });
+
+    it("should unregister CustomerCreated event handler", () => {
+        const eventDispatcher = new EventDispatcher();
+        const eventHandler = new EnviaConsoleLog1Handler();
+
+        eventDispatcher.register("CustomerCreatedEvent", eventHandler);
+        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"].length).toBe(1);
+
+        eventDispatcher.unregister("CustomerCreatedEvent", eventHandler);
+        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"].length).toBe(0);
+    });
+
+    it("should unregister all event handlers", () => {
+        const eventDispatcher = new EventDispatcher();
+        const eventHandler1 = new EnviaConsoleLog1Handler();
+        const eventHandler2 = new EnviaConsoleLog2Handler();
+        const eventHandler3 = new EnviaConsoleLogAddressChangedHandler();
+
+        eventDispatcher.register("CustomerCreatedEvent", eventHandler1);
+        eventDispatcher.register("CustomerCreatedEvent", eventHandler2);
+        eventDispatcher.register("CustomerAddressChangedEvent", eventHandler3);
+
+        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"]).toBeDefined();
+        expect(eventDispatcher.getEventHandlers["CustomerAddressChangedEvent"]).toBeDefined();
+
+        eventDispatcher.unregisterAll();
+
+        expect(eventDispatcher.getEventHandlers["CustomerCreatedEvent"]).toBeUndefined();
+        expect(eventDispatcher.getEventHandlers["CustomerAddressChangedEvent"]).toBeUndefined();
+    });
+
 });
