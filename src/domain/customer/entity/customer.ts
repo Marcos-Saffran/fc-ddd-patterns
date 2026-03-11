@@ -1,3 +1,7 @@
+import eventDispatcher from "../../@shared/event/event-dispatcher";
+import EventDispatcher from "../../@shared/event/event-dispatcher";
+import CustomerAddressChangedEvent from "../event/customer-address-changed.event";
+import CustomerCreatedEvent from "../event/customer-created.event";
 import Address from "../value-object/address";
 
 export default class Customer {
@@ -6,11 +10,20 @@ export default class Customer {
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
+  private _eventDispatcher: EventDispatcher;
 
-  constructor(id: string, name: string) {
+  constructor(id: string, name: string, eventDispatcher?: EventDispatcher) {
     this._id = id;
     this._name = name;
+    this._eventDispatcher = eventDispatcher || new EventDispatcher();
     this.validate();
+
+    // Dispara o evento CustomerCreated após criar o cliente
+    const customerCreatedEvent = new CustomerCreatedEvent({
+        id: this._id,
+        name: this._name,
+    });
+    this._eventDispatcher.notify(customerCreatedEvent);    
   }
 
   get id(): string {
@@ -45,6 +58,15 @@ export default class Customer {
   
   changeAddress(address: Address) {
     this._address = address;
+
+    
+    // Dispara o evento CustomerAddressChangedEvent após mudar o endereço do cliente
+    const customerAddressChangedEvent = new CustomerAddressChangedEvent({
+        id: this._id,
+        name: this._name,
+        address: this._address,
+    });
+    this._eventDispatcher.notify(customerAddressChangedEvent);
   }
 
   isActive(): boolean {
@@ -66,7 +88,4 @@ export default class Customer {
     this._rewardPoints += points;
   }
 
-  set Address(address: Address) {
-    this._address = address;
-  }
 }
